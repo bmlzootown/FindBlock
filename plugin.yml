@@ -1,0 +1,8 @@
+name: BlockFinder
+author: bmlzootown
+version: 1.0 
+main: me.bmlzootown.BlockFinder
+depend: [WorldEdit]
+commands:
+     /find:
+          description: Finds the location of the block name provided.
