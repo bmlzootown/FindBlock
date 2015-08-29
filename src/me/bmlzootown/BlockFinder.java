@@ -1,15 +1,11 @@
 package me.bmlzootown;
 
-//import java.util.ArrayList;
-//import java.util.List;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Bukkit;
-//import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,6 +33,7 @@ public class BlockFinder extends JavaPlugin implements Listener {
 		if ((sender instanceof Player)) {
 			
 			if (cmd.getName().equalsIgnoreCase("/find")) {
+			   if (p.hasPermission("blockfinder.find")) {
 				if (args.length == 1) {
 					Selection sel = getWorldEdit().getSelection(p);
 					if (sel != null) {
@@ -86,15 +83,19 @@ public class BlockFinder extends JavaPlugin implements Listener {
 					p.sendMessage(ChatColor.RED +  "Too few parameters!");
 					p.sendMessage(ChatColor.RED +  "Usage: //find <block name> [page]");
 				}
-				
-			} 
+			} else {
+				p.sendMessage(ChatColor.RED + "You are not permitted to do that. Are you in the right mode?");
+			}
+		   } 
 			
 		} else if (!(sender instanceof Player)) {
 			sender.sendMessage("You cannot run this command via the console!");
 		}
-		return true;
+		
+		return false;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static List<String> FindBlock(Player p, Selection sel, String block) {
 		//List<Block> blocks = new ArrayList<Block>();
 		
@@ -112,11 +113,13 @@ public class BlockFinder extends JavaPlugin implements Listener {
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
-					//String blockName = sel.getWorld().getBlockAt(x, y, z).getType().toString();
-					String otherName = sel.getWorld().getBlockAt(x, y, z).getType().name();
-					String blockData = sel.getWorld().getBlockAt(x, y, z).getState().getData().toString();
-					if (BlockType.lookup(block).name().contains(otherName)) {
-						output.add(blockData + ": "  + x + "x " + y + "y " + z + "z");
+					if (BlockType.lookup(block) != null) {
+						int blockID = BlockType.lookup(block).getID();
+						int blockSel = sel.getWorld().getBlockAt(x, y, z).getType().getId();
+						
+						if (blockID == blockSel) {
+							output.add(BlockType.lookup(block).toString() + ": "  + x + "x " + y + "y " + z + "z");
+						}
 					}
 				}
 			}
@@ -135,8 +138,14 @@ public class BlockFinder extends JavaPlugin implements Listener {
 
         sender.sendMessage(ChatColor.DARK_PURPLE + "-----" + ChatColor.LIGHT_PURPLE + " Page "  + page + " out of " + maxPages + ChatColor.DARK_PURPLE + " -----");
 
-        for (int i = 9 * (page - 1); i < 9 * page && i < results.size(); i++) {
-            sender.sendMessage(results.get(i));
+        for (int i = 8 * (page - 1); i < 8 * page && i < results.size(); i++) {
+        	if ((i % 2) != 0) {
+        		sender.sendMessage(ChatColor.AQUA + results.get(i));
+        	}
+        	
+        	if ((i % 2) == 0) {
+        		sender.sendMessage(ChatColor.DARK_AQUA + results.get(i));
+        	}
         }
     }
 	

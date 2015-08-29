@@ -5,4 +5,4 @@ main: me.bmlzootown.BlockFinder
 depend: [WorldEdit]
 commands:
      /find:
-          description: Finds the location of the block name provided.
+          description: Finds the location of the block name/id provided.
